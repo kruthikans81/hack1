@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicVote 360 - Interactive 5-Stage Election & EVM Voting Simulator</title>
+  <meta name="description" content="An interactive civic education portal featuring a 5-stage election simulator, Form 6 registration, electoral roll search, photo ID check, EVM+VVPAT voting, and indelible ink marking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="#" class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <span>CivicVote 360</span>
+    </a>
+    <ul class="nav-links">
+      <li><a class="nav-link active" data-target="sec-simulator">5-Stage Election Simulator</a></li>
+      <li><a class="nav-link" data-target="sec-timeline">Election Process Timeline</a></li>
+      <li><a class="nav-link" data-target="sec-walkthrough">Polling Station Guide</a></li>
+      <li><a class="nav-link" data-target="sec-quiz">Civic Quiz</a></li>
+    </ul>
+    <div class="nav-controls">
+      <div class="lang-switcher">
+        <button type="button" class="lang-btn active" id="lang-en-btn" onclick="window.evmController.setLanguage('en'); this.classList.add('active'); document.getElementById('lang-kn-btn').classList.remove('active');">EN</button>
+        <button type="button" class="lang-btn" id="lang-kn-btn" onclick="window.evmController.setLanguage('kn'); this.classList.add('active'); document.getElementById('lang-en-btn').classList.remove('active');">ಕನ್ನಡ</button>
+      </div>
+      <button type="button" class="icon-btn" id="open-audit-btn" title="Inspect VVPAT Audit Slips">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span>VVPAT Slips Box</span>
+        <span class="audit-badge" id="audit-count-badge">0 Slips</span>
+      </button>
+      <button type="button" class="icon-btn" id="sound-toggle-btn" onclick="window.evmApp.toggleMute()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        <span>Audio ON</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- ==========================================================================
+         SECTION 1: 5-STAGE INTERACTIVE ELECTION SIMULATOR
+         ========================================================================== -->
+    <section id="sec-simulator" class="app-section active-section">
+      <div class="hero-banner">
+        <h1 class="hero-title">Interactive 5-Stage Election Simulator</h1>
+        <p class="hero-subtitle">Experience the full election journey: Pre-Election Prep (Form 6 & Roll Search) $\rightarrow$ Photo ID Verification $\rightarrow$ Control Unit Release $\rightarrow$ Secret Booth EVM Voting & VVPAT Check $\rightarrow$ Indelible Ink Marking.</p>
+        
+        <!-- 5-Stage Progress Stepper Bar -->
+        <div class="stepper-bar">
+          <div class="stepper-item active" id="station-step-1" onclick="window.evmController.setStage(1)">
+            <div class="step-num">1</div>
+            <div class="step-label-box">
+              <span class="step-title">Pre-Election Prep</span>
+              <span class="step-sub">Form 6 & Roll Search</span>
+            </div>
+          </div>
+
+          <div class="stepper-item" id="station-step-2" onclick="window.evmController.setStage(2)">
+            <div class="step-num">2</div>
+            <div class="step-label-box">
+              <span class="step-title">Identity Verification</span>
+              <span class="step-sub">Photo ID Check</span>
+            </div>
+          </div>
+
+          <div class="stepper-item" id="station-step-3" onclick="window.evmController.setStage(3)">
+            <div class="step-num">3</div>
+            <div class="step-label-box">
+              <span class="step-title">Control Unit Activation</span>
+              <span class="step-sub">Polling Officer Release</span>
+            </div>
+          </div>
+
+          <div class="stepper-item" id="station-step-4" onclick="window.evmController.setStage(4)">
+            <div class="step-num">4</div>
+            <div class="step-label-box">
+              <span class="step-title">Voting Compartment</span>
+              <span class="step-sub">EVM Vote & 7s VVPAT</span>
+            </div>
+          </div>
+
+          <div class="stepper-item" id="station-step-5" onclick="window.evmController.setStage(5)">
+            <div class="step-num">5</div>
+            <div class="step-label-box">
+              <span class="step-title">Indelible Ink Station</span>
+              <span class="step-sub">Left Index Finger Mark</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-banner-wrapper">
+          <div class="status-banner" id="evm-status-banner">
+            STAGE 1: Pre-Election Preparation — Form 6 Registration & Electoral Roll Search.
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 1 PANEL: PRE-ELECTION PREPARATION -->
+      <div class="stage-panel active-panel" id="stage-panel-1">
+        <div class="stage-prep-grid">
+          <!-- Step 1: Form 6 Registration -->
+          <div class="prep-card">
+            <span class="prep-step-badge">STEP 1: VOTER REGISTRATION</span>
+            <h3>Form 6 Online Registration</h3>
+            <p>Verify eligibility (Indian Citizen, 18+ years of age) and submit Form 6 online via <code>voters.eci.gov.in</code> or Voter Helpline App by uploading valid photo identity, address proof, and a passport-size photo.</p>
+
+            <button type="button" class="primary-btn" onclick="window.evmController.submitForm6()">
+              📝 Submit Form 6 Registration Online
+            </button>
+
+            <div class="form-result-box" id="form6-result"></div>
+          </div>
+
+          <!-- Step 2: Electoral Roll Search -->
+          <div class="prep-card">
+            <span class="prep-step-badge">STEP 2: ELECTORAL ROLL SEARCH</span>
+            <h3>Check Electoral Roll & Locate Polling Station</h3>
+            <p>Search <code>electoralsearch.eci.gov.in</code> to confirm your name appears on the official voter list and note down your Constituency, Polling Station address, and Serial Number.</p>
+
+            <button type="button" class="primary-btn" onclick="window.evmController.searchElectoralRoll()">
+              🔍 Search ECI Electoral Roll Portal
+            </button>
+
+            <div id="electoral-roll-result" style="margin-top:0.5rem;"></div>
+
+            <button type="button" class="primary-btn mt-3 disabled" id="goto-stage2-btn" disabled onclick="window.evmController.setStage(2)">
+              Proceed to Stage 2: ID Check ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Casting the Vote Guidelines Callout -->
+        <div class="rules-callout-card" style="margin-top:2rem;background:#111726;border:1px solid #1e293b;border-radius:var(--radius-lg);padding:1.5rem;">
+          <h4 style="color:#60a5fa;margin-bottom:0.5rem;font-size:1.05rem;">📌 Important Rules for Casting the Vote (EVM & VVPAT)</h4>
+          <ul style="color:var(--text-muted);font-size:0.9rem;padding-left:1.25rem;line-height:1.6;">
+            <li><strong>Prohibited Devices:</strong> Mobile phones, cameras, and electronic devices are strictly prohibited inside the private voting compartment.</li>
+            <li><strong>Selecting Candidate:</strong> Press the BLUE button next to your preferred candidate's name and symbol on the Electronic Voting Machine (EVM).</li>
+            <li><strong>Visual Verification (7-Second Window):</strong> Look at the transparent glass window of the attached VVPAT printer. A printed paper slip displaying the candidate's serial number, name, and symbol will remain visible for <strong>7 seconds</strong> before dropping into the lower sealed box.</li>
+            <li><strong>Audio Confirmation (2-Second Beep):</strong> Wait for the continuous <strong>2-second long BEEP sound</strong> from the machine, confirming your vote has been recorded.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- STAGE 2 PANEL: IDENTITY VERIFICATION BOOTH -->
+      <div class="stage-panel" id="stage-panel-2">
+        <div class="stage1-container">
+          <div class="desk-illustration">
+            <div class="officer-avatar">👮‍♂️</div>
+            <h3>Polling Officer Desk #1</h3>
+            <p>Verifying Voter's photo identity document against official electoral roll list.</p>
+
+            <div class="voter-id-card">
+              <div class="voter-id-header">ELECTION COMMISSION OF INDIA</div>
+              <strong>ELECTOR PHOTO IDENTITY CARD</strong>
+              <div style="margin-top:4px;">Name: <strong>ALEX MORGAN</strong></div>
+              <div>EPIC No: <strong>ECI-98765432</strong></div>
+              <div>Status: <strong>PHOTO MATCHED ✓</strong></div>
+            </div>
+
+            <button type="button" class="primary-btn mt-3" onclick="window.evmController.verifyPhotoId()">
+              ✅ Verify Photo ID & Proceed to Stage 3 ➔
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 3 PANEL: CONTROL UNIT ACTIVATION -->
+      <div class="stage-panel" id="stage-panel-3">
+        <div class="stage2-container">
+          <h2>Stage 3: Control Unit Activation</h2>
+          <p>The Third Polling Officer checks your voter slip and presses the <strong>"BALLOT"</strong> button on the Control Unit console to unlock the Ballot Unit in the secret voting booth.</p>
+
+          <div class="cu-panel-large">
+            <div class="cu-status-screen" id="cu-stage3-status">
+              CU STATUS: WAITING FOR OFFICER RELEASE
+            </div>
+
+            <div class="cu-status-panel" style="width:100%;">
+              <div class="cu-status-item">
+                <span>READY</span>
+                <div class="led-light green-led" id="cu-ready-led-stage3"></div>
+              </div>
+            </div>
+
+            <button type="button" class="ballot-release-btn-large" onclick="window.evmController.activateControlUnitBallot()">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              <span>PRESS "BALLOT" BUTTON TO UNLOCK EVM</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 4 PANEL: VOTING COMPARTMENT & EVM + VVPAT INTERACTION -->
+      <div class="stage-panel" id="stage-panel-4">
+        <div class="evm-arena">
+
+          <!-- 1. BALLOT UNIT (BU) -->
+          <div class="evm-casing ballot-unit">
+            <div class="casing-header">
+              <span class="casing-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                BALLOT UNIT (BU)
+              </span>
+              <div class="led-indicator-wrapper">
+                <span>READY</span>
+                <div class="led-light green-led active" id="bu-ready-led" title="Ballot Unit Ready LED"></div>
+              </div>
+            </div>
+
+            <div class="bu-candidate-rows" id="bu-candidate-rows">
+              <!-- Dynamically populated by evm.js -->
+            </div>
+
+            <div class="bu-lock-overlay" id="bu-lock-overlay">
+              <div class="lock-msg-badge">
+                🔒 MACHINE LOCKED — VOTE REGISTERED
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. VVPAT SCREEN (Voter Verifiable Paper Audit Trail) -->
+          <div class="evm-casing vvpat-unit">
+            <div class="casing-header">
+              <span class="casing-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 12v2H8v-2h8zm2-2H6v-4h12v4z"/></svg>
+                VVPAT SCREEN
+              </span>
+              <span class="vvpat-countdown-badge" id="vvpat-countdown-badge">07s</span>
+            </div>
+
+            <div class="vvpat-display-area">
+              <div class="vvpat-glass-frame" id="vvpat-glass-frame">
+                <div class="vvpat-lamp" id="vvpat-lamp"></div>
+                <div class="vvpat-window-content" id="vvpat-window-content">
+                  <div class="vvpat-empty">VVPAT TRANSPARENT GLASS WINDOW</div>
+                </div>
+              </div>
+
+              <div class="vvpat-timer-wrapper">
+                <div class="vvpat-timer-label">
+                  <span>Verification Display Window</span>
+                  <span>7 Seconds Rule</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-bar" id="vvpat-timer-bar"></div>
+                </div>
+              </div>
+
+              <div class="vvpat-drop-box-label">
+                ⬇ SEALED VVPAT DROP BOX BELOW
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. CONTROL UNIT (CU) -->
+          <div class="evm-casing control-unit">
+            <div class="casing-header">
+              <span class="casing-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                CONTROL UNIT (CU)
+              </span>
+            </div>
+
+            <div class="cu-body">
+              <div class="cu-display-box">
+                <span class="cu-disp-label">TOTAL VOTES</span>
+                <span class="cu-digital-screen" id="cu-vote-counter">000</span>
+              </div>
+
+              <div class="cu-status-panel">
+                <div class="cu-status-item">
+                  <span>READY</span>
+                  <div class="led-light green-led active" id="cu-ready-led"></div>
+                </div>
+                <div class="cu-status-item">
+                  <span>BUSY</span>
+                  <div class="led-light red-led" id="cu-busy-led"></div>
+                </div>
+              </div>
+
+              <div class="po-action-card">
+                <div class="po-title">Polling Officer Console</div>
+                <button type="button" class="ballot-release-btn" onclick="window.evmController.releaseBallot()">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                  <span>RELEASE BALLOT</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- STAGE 5 PANEL: INDELIBLE INK MARKING STATION -->
+      <div class="stage-panel" id="stage-panel-5">
+        <div class="stage4-container">
+          <h2>Stage 5: Indelible Ink Station</h2>
+          <p>After casting your vote, the Second Polling Officer applies indelible purple ink to your left forefinger to mark that you have voted and prevent impersonation.</p>
+
+          <div class="ink-station-box">
+            <div class="hand-finger-svg">
+              <svg viewBox="0 0 100 140" width="100" height="140">
+                <!-- Left Index Finger Vector Graphic -->
+                <path d="M35 130 V50 C35 30 65 30 65 50 V130 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/>
+                <path d="M42 40 C42 35 58 35 58 40 V60 H42 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+              </svg>
+              <div class="ink-mark-spot" id="ink-mark-stage5"></div>
+            </div>
+
+            <button type="button" class="primary-btn ink-btn" id="apply-ink-btn-stage5" onclick="window.evmController.applyIndelibleInkStage5()">
+              ✍️ Trigger Indelible Ink Animation
+            </button>
+
+            <div style="margin-top:1.5rem;" class="status-banner state-ready">
+              🎉 VOTING PROCESS COMPLETE! YOUR VOTE IS SAFELY RECORDED & VERIFIED.
+            </div>
+
+            <button type="button" class="primary-btn mt-3" style="margin: 1.5rem auto 0 auto;" onclick="window.evmController.setStage(1)">
+              🔄 Start Next Voter Simulation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 2: ELECTION PROCESS TIMELINE
+         ========================================================================== -->
+    <section id="sec-timeline" class="app-section">
+      <div class="section-header">
+        <h2 class="section-title">8 Stages of the Election Process</h2>
+        <p class="section-subtitle">Click on any stage below to explore key procedures, statutory rules, and constitutional safeguards.</p>
+      </div>
+
+      <div class="timeline-grid">
+        <div class="timeline-card">
+          <div class="card-step-num">01</div>
+          <h3 class="card-title">Election Notification</h3>
+          <p class="card-desc">The official announcement specifying voting dates, constituency boundaries, and filing deadlines.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Published in official gazette notifications. The Model Code of Conduct comes into immediate effect across all participating districts.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">02</div>
+          <h3 class="card-title">Nomination Filing</h3>
+          <p class="card-desc">Candidates submit their formal nomination papers and financial/criminal affidavits to the Returning Officer.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Candidates pay security deposits, submit sworn affidavits (Form 26), and declare assets, liabilities, and educational qualifications.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">03</div>
+          <h3 class="card-title">Scrutiny of Nominations</h3>
+          <p class="card-desc">Returning Officers inspect nominations for legal validity and compliance with electoral qualifications.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Opposing candidates can raise objections. Invalid or incomplete nominations are formally rejected after hearing.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">04</div>
+          <h3 class="card-title">Withdrawal & Symbol Allotment</h3>
+          <p class="card-desc">Candidates may withdraw their nominations. Registered and independent candidates receive official election symbols.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Recognized national/state parties get reserved party symbols. Independent candidates choose from a prescribed free symbols pool.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">05</div>
+          <h3 class="card-title">Campaign Period</h3>
+          <p class="card-desc">Political parties engage voters through rallies, manifestos, and media under Model Code of Conduct monitoring.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Campaigning stops 48 hours before the conclusion of poll (the Silence Period). Expenditure monitors track candidate spending.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">06</div>
+          <h3 class="card-title">Polling & EVM Voting</h3>
+          <p class="card-desc">Voters cast secret ballots using EVMs with VVPAT audit slips at designated polling stations under security supervision.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Mock poll verified by polling agents before voting starts. Secret voting compartment ensures ballot secrecy.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">07</div>
+          <h3 class="card-title">VVPAT Audit & Counting</h3>
+          <p class="card-desc">Sealed Control Units and VVPAT drop boxes are brought to counting centers under Armed Guard protection for tallying.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Electronic vote counts on Control Units are recorded round-by-round. Mandatory physical VVPAT slip counting in randomly selected polling stations verifies EVM accuracy.
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="card-step-num">08</div>
+          <h3 class="card-title">Declaration of Results</h3>
+          <p class="card-desc">The Returning Officer certifies candidate vote totals and formally declares the elected representative.</p>
+          <div class="card-expanded-body">
+            <strong>Key Procedures:</strong> Certificate of Election (Form 22) issued to winning candidate. Final result tally published in the Official Gazette.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 3: POLLING STATION WALKTHROUGH
+         ========================================================================== -->
+    <section id="sec-walkthrough" class="app-section">
+      <div class="section-header">
+        <h2 class="section-title">Step-by-Step Polling Station Guide</h2>
+        <p class="section-subtitle">Understand what happens when you step inside a polling station on election day.</p>
+      </div>
+
+      <div class="station-steps-wrapper">
+        <div class="station-step-item">
+          <div class="step-icon-badge">1</div>
+          <div class="step-content">
+            <h3>First Polling Officer (Identification Check)</h3>
+            <p>Checks your name on the electoral roll list and verifies your official photo identity document (Voter ID card / EPIC or approved ID proof).</p>
+          </div>
+        </div>
+
+        <div class="station-step-item">
+          <div class="step-icon-badge">2</div>
+          <div class="step-content">
+            <h3>Second Polling Officer (Indelible Ink & Register)</h3>
+            <p>Applies indelible purple ink mark on your left forefinger, records your entry in Form 17A register, and issues your voter slip.</p>
+          </div>
+        </div>
+
+        <div class="station-step-item">
+          <div class="step-icon-badge">3</div>
+          <div class="step-content">
+            <h3>Third Polling Officer (Control Unit Release)</h3>
+            <p>Takes your voter slip, presses the "BALLOT" button on the EVM Control Unit to unlock the Ballot Unit inside the voting booth, and directs you inside.</p>
+          </div>
+        </div>
+
+        <div class="station-step-item">
+          <div class="step-icon-badge">4</div>
+          <div class="step-content">
+            <h3>Voting Compartment (Cast Vote & VVPAT Check)</h3>
+            <p>Inside the secret compartment, press the BLUE button next to your chosen candidate. Verify your choice on the 7-second VVPAT glass screen and listen for the 2-second BEEP confirmation tone.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SECTION 4: CIVIC QUIZ
+         ========================================================================== -->
+    <section id="sec-quiz" class="app-section">
+      <div class="section-header">
+        <h2 class="section-title">Civic Awareness & Voter Rights Quiz</h2>
+        <p class="section-subtitle">Test your knowledge on EVM voting, VVPAT verification rules, and election procedures.</p>
+      </div>
+
+      <div class="quiz-wrapper">
+        <div id="quiz-container">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- VVPAT Audit Inspector Modal -->
+  <div class="modal-overlay" id="audit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>VVPAT Sealed Drop Box Audit Inspector</h3>
+        <button type="button" class="icon-btn" id="close-audit-btn">✖</button>
+      </div>
+      <div class="modal-body" id="audit-slip-list">
+        <!-- Rendered by evm.js -->
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="audio.js"></script>
+  <script src="evm.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
